@@ -18,11 +18,18 @@
 module type NAT = sig
   type t
 
-  val eq  : t -> t -> bool
   val zero : t
-  (* Dodajte manjkajoče! *)
-  (* val to_int : t -> int *)
-  (* val of_int : int -> t *)
+  val one : t
+
+  val eq  : t -> t -> bool
+  val (+) : t -> t -> t
+  val (-) : t -> t -> t
+  val ( * ): t -> t -> t
+
+
+  val to_int : t -> int 
+  val of_int : int -> t 
+
 end
 
 (*----------------------------------------------------------------------------*
@@ -34,13 +41,24 @@ end
 [*----------------------------------------------------------------------------*)
 
 module Nat_int : NAT = struct
-
   type t = int
-  let eq x y = failwith "later"
-  let zero = 0
-  (* Dodajte manjkajoče! *)
 
+  let eq x y = x = y
+  let zero = 0
+  let one = 1
+
+  let ( + ) m n = m + n
+  let ( - ) m n = if m < n then zero else m - n
+  let ( * ) m n = m * n
+
+  let of_int x = x
+  let to_int n = n
 end
+
+
+let pet = Nat_int.of_int 5
+let deset = Nat_int.of_int 10
+let petnajst = Nat_int.of_int 15
 
 (*----------------------------------------------------------------------------*
  Napišite implementacijo `NAT`, ki temelji na [Peanovih
@@ -53,10 +71,44 @@ end
 
 module Nat_peano : NAT = struct
 
-  type t = unit (* To morate spremeniti! *)
-  let eq x y = failwith "later"
-  let zero = () (* To morate spremeniti! *)
-  (* Dodajte manjkajoče! *)
+  type t = 
+  | Nic
+  | Naslednik of t
+
+  let zero = Nic
+  let one = Naslednik Nic
+  
+  let rec eq m n = 
+    match (m, n) with
+      | Nic, Nic -> true
+      | Nic, _ | _, Nic -> false
+      | Naslednik m', Naslednik n' -> eq m' n'
+  
+  let rec ( + ) m n = 
+    match n with
+    | Nic -> m
+    | Naslednik n' -> Naslednik m + n'
+
+  let rec ( * ) m n =
+    match n with
+    | Nic -> Nic
+    | Naslednik n' -> m + (m * n')
+
+  let rec ( - ) m n =
+    match (m, n) with
+    | m, Nic -> m
+    | Naslednik m', Naslednik n' -> m' - n
+    | Nic, _ -> Nic
+  
+  let rec to_int n = 
+    match n with 
+    | Nic -> 0
+    | Naslednik n' -> 1 + to_int n'
+
+  let rec of_int n = 
+    match n with 
+    | 0 -> Nic
+    | n' -> Naslednik (of_int (Int.sub n' 1))
 
 end
 
