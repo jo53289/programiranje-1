@@ -166,13 +166,13 @@ let inverz p =
  ### Razcep na cikle
 [*----------------------------------------------------------------------------*)
 
-let cikli p : int list -> int list list =
+(*let cikli p : int list -> int list list =
   let array_of_p = Array.of_list p
   id_array 
   let rec aux acc cikli k=
     function
     | [] -> List.rev cikli
-    | _ -> if array_of_p.(k) 
+    | _ -> if array_of_p.(k) *)
 
 
 
